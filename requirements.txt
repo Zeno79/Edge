@@ -8,3 +8,5 @@ aiohttp==3.8.4
 pytz==2023.3
 psutil
 ffmpeg
+python-telegram-bot
+pip install -r requirements.txt
