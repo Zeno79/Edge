@@ -11,7 +11,6 @@ from token_manager import add_token, use_token, tokens_left
 
 
 class Bot(Client):
-
     def __init__(self):
         super().__init__(
             name="renamer",
@@ -23,7 +22,32 @@ class Bot(Client):
             sleep_threshold=15,
         )
 
-  def generate(update: Update, context: CallbackContext) -> None:
+    async def start(self):
+        await super().start()
+        me = await self.get_me()
+        self.mention = me.mention
+        self.username = me.username  
+        self.uptime = Config.BOT_UPTIME     
+        if Config.WEBHOOK:
+            app = web.AppRunner(await web_server())
+            await app.setup()       
+            await web.TCPSite(app, "0.0.0.0", 8080).start()     
+        print(f"{me.first_name} ɪꜱ ꜱᴛᴀʀᴛᴇᴅ.....⚡️")
+        for id in Config.ADMIN:
+            try:
+                await self.send_message(id, f"**{me.first_name} ɪꜱ ꜱᴛᴀʀᴛᴇᴅ.....⚡️**")                                
+            except:
+                pass
+        if Config.LOG_CHANNEL:
+            try:
+                curr = datetime.now(timezone("Asia/Kolkata"))
+                date = curr.strftime('%d %B, %Y')
+                time = curr.strftime('%I:%M:%S %p')
+                await self.send_message(Config.LOG_CHANNEL, f"**__{me.mention} Iꜱ Rᴇsᴛᴀʀᴛᴇᴅ !!**\n\n📅 Dᴀᴛᴇ : `{date}`\n⏰ Tɪᴍᴇ : `{time}`\n🌐 Tɪᴍᴇᴢᴏɴᴇ : `Asia/Kolkata`\n\n🉐 Vᴇʀsɪᴏɴ : `v{__version__} (Layer {layer})`</b>")                                
+            except:
+                print("Pʟᴇᴀꜱᴇ Mᴀᴋᴇ Tʜɪꜱ Iꜱ Aᴅᴍɪɴ Iɴ Yᴏᴜʀ Lᴏɢ Cʜᴀɴɴᴇʟ")
+
+def generate(update: Update, context: CallbackContext) -> None:
     token = add_token()
     update.message.reply_text(f'Your generated token is: {token}')
 
@@ -41,10 +65,10 @@ def rename(update: Update, context: CallbackContext) -> None:
             update.message.reply_text('Invalid or expired token.')
     else:
         update.message.reply_text('Please provide a token and a new name.')
-        
-    def main() -> None:
+
+def main() -> None:
     # Replace 'YOUR_BOT_TOKEN' with your actual bot token
-    updater = Updater("YOUR_BOT_TOKEN")
+    updater = Updater("6005947500:AAHloPfbZLLgDobGyMwLn1DLbn2WptOJIgo")
 
     dispatcher = updater.dispatcher
 
@@ -58,28 +82,7 @@ def rename(update: Update, context: CallbackContext) -> None:
 
 if __name__ == '__main__':
     main()
-     
-    async def start(self):
-        await super().start()
-        me = await self.get_me()
-        self.mention = me.mention
-        self.username = me.username  
-        self.uptime = Config.BOT_UPTIME     
-        if Config.WEBHOOK:
-            app = web.AppRunner(await web_server())
-            await app.setup()       
-            await web.TCPSite(app, "0.0.0.0", 8080).start()     
-        print(f"{me.first_name} ɪꜱ ꜱᴛᴀʀᴛᴇᴅ.....⚡️")
-        for id in Config.ADMIN:
-            try: await self.send_message(id, f"**{me.first_name} ɪꜱ ꜱᴛᴀʀᴛᴇᴅ.....⚡️**")                                
-            except: pass
-        if Config.LOG_CHANNEL:
-            try:
-                curr = datetime.now(timezone("Asia/Kolkata"))
-                date = curr.strftime('%d %B, %Y')
-                time = curr.strftime('%I:%M:%S %p')
-                await self.send_message(Config.LOG_CHANNEL, f"**__{me.mention} Iꜱ Rᴇsᴛᴀʀᴛᴇᴅ !!**\n\n📅 Dᴀᴛᴇ : `{date}`\n⏰ Tɪᴍᴇ : `{time}`\n🌐 Tɪᴍᴇᴢᴏɴᴇ : `Asia/Kolkata`\n\n🉐 Vᴇʀsɪᴏɴ : `v{__version__} (Layer {layer})`</b>")                                
-            except:
-                print("Pʟᴇᴀꜱᴇ Mᴀᴋᴇ Tʜɪꜱ Iꜱ Aᴅᴍɪɴ Iɴ Yᴏᴜʀ Lᴏɢ Cʜᴀɴɴᴇʟ")
 
+# Start the Pyrogram bot
 Bot().run()
+
