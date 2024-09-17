@@ -5,29 +5,9 @@ from pyrogram.raw.all import layer
 from config import Config
 from aiohttp import web
 from route import web_server
-from pyrogram import Update
-from pyrogram import Updater, CommandHandler, CallbackContext
-from token_manager import add_token, use_token, tokens_left
-
-
-# bot.py (example, adjust as necessary)
-from token_utils import generate_token, decode_token
-from token_storage import add_token, remove_token, get_tokens_left
-
-def authenticate_user(user_id):
-    # Generate a token for the user
-    token = generate_token(user_id)
-    add_token(user_id, token)
-    return token
-
-def check_token(token):
-    return decode_token(token)
-
-def get_user_tokens_left(user_id):
-    return get_tokens_left(user_id)
-    
 
 class Bot(Client):
+
     def __init__(self):
         super().__init__(
             name="renamer",
@@ -51,10 +31,8 @@ class Bot(Client):
             await web.TCPSite(app, "0.0.0.0", 8080).start()     
         print(f"{me.first_name} ɪꜱ ꜱᴛᴀʀᴛᴇᴅ.....⚡️")
         for id in Config.ADMIN:
-            try:
-                await self.send_message(id, f"**{me.first_name} ɪꜱ ꜱᴛᴀʀᴛᴇᴅ.....⚡️**")                                
-            except:
-                pass
+            try: await self.send_message(id, f"**{me.first_name} ɪꜱ ꜱᴛᴀʀᴛᴇᴅ.....⚡️**")                                
+            except: pass
         if Config.LOG_CHANNEL:
             try:
                 curr = datetime.now(timezone("Asia/Kolkata"))
@@ -64,42 +42,4 @@ class Bot(Client):
             except:
                 print("Pʟᴇᴀꜱᴇ Mᴀᴋᴇ Tʜɪꜱ Iꜱ Aᴅᴍɪɴ Iɴ Yᴏᴜʀ Lᴏɢ Cʜᴀɴɴᴇʟ")
 
-def generate(update: Update, context: CallbackContext) -> None:
-    token = add_token()
-    update.message.reply_text(f'Your generated token is: {token}')
-
-def check_tokens(update: Update, context: CallbackContext) -> None:
-    remaining_tokens = tokens_left()
-    update.message.reply_text(f'Tokens left: {remaining_tokens}')
-
-def rename(update: Update, context: CallbackContext) -> None:
-    if context.args and len(context.args) > 1:
-        token = context.args[0]
-        new_name = ' '.join(context.args[1:])
-        if use_token(token):
-            update.message.reply_text(f'Renaming to: {new_name}')
-        else:
-            update.message.reply_text('Invalid or expired token.')
-    else:
-        update.message.reply_text('Please provide a token and a new name.')
-
-def main() -> None:
-    # Replace 'YOUR_BOT_TOKEN' with your actual bot token
-    updater = Updater("6005947500:AAHloPfbZLLgDobGyMwLn1DLbn2WptOJIgo")
-
-    dispatcher = updater.dispatcher
-
-    # Register existing handlers
-    dispatcher.add_handler(CommandHandler('rename', rename))  # Existing rename command
-    dispatcher.add_handler(CommandHandler('generate', generate))  # New generate command
-    dispatcher.add_handler(CommandHandler('tokens_left', check_tokens))  # New token count command
-
-    updater.start_polling()
-    updater.idle()
-
-if __name__ == '__main__':
-    main()
-
-# Start the Pyrogram bot
 Bot().run()
-
