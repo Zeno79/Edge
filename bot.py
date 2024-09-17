@@ -5,6 +5,21 @@ from pyrogram.raw.all import layer
 from config import Config
 from aiohttp import web
 from route import web_server
+from token_utils import generate_token, decode_token
+from token_storage import add_token, remove_token, get_tokens_left
+
+def authenticate_user(user_id):
+    # Generate a token for the user
+    token = generate_token(user_id)
+    add_token(user_id, token)
+    return token
+
+def check_token(token):
+    return decode_token(token)
+
+def get_user_tokens_left(user_id):
+    return get_tokens_left(user_id)
+
 
 class Bot(Client):
 
