@@ -10,6 +10,23 @@ from pyrogram import Updater, CommandHandler, CallbackContext
 from token_manager import add_token, use_token, tokens_left
 
 
+# bot.py (example, adjust as necessary)
+from token_utils import generate_token, decode_token
+from token_storage import add_token, remove_token, get_tokens_left
+
+def authenticate_user(user_id):
+    # Generate a token for the user
+    token = generate_token(user_id)
+    add_token(user_id, token)
+    return token
+
+def check_token(token):
+    return decode_token(token)
+
+def get_user_tokens_left(user_id):
+    return get_tokens_left(user_id)
+    
+
 class Bot(Client):
     def __init__(self):
         super().__init__(
