@@ -23,6 +23,42 @@ class Bot(Client):
             sleep_threshold=15,
         )
 
+  def generate(update: Update, context: CallbackContext) -> None:
+    token = add_token()
+    update.message.reply_text(f'Your generated token is: {token}')
+
+def check_tokens(update: Update, context: CallbackContext) -> None:
+    remaining_tokens = tokens_left()
+    update.message.reply_text(f'Tokens left: {remaining_tokens}')
+
+def rename(update: Update, context: CallbackContext) -> None:
+    if context.args and len(context.args) > 1:
+        token = context.args[0]
+        new_name = ' '.join(context.args[1:])
+        if use_token(token):
+            update.message.reply_text(f'Renaming to: {new_name}')
+        else:
+            update.message.reply_text('Invalid or expired token.')
+    else:
+        update.message.reply_text('Please provide a token and a new name.')
+        
+    def main() -> None:
+    # Replace 'YOUR_BOT_TOKEN' with your actual bot token
+    updater = Updater("YOUR_BOT_TOKEN")
+
+    dispatcher = updater.dispatcher
+
+    # Register existing handlers
+    dispatcher.add_handler(CommandHandler('rename', rename))  # Existing rename command
+    dispatcher.add_handler(CommandHandler('generate', generate))  # New generate command
+    dispatcher.add_handler(CommandHandler('tokens_left', check_tokens))  # New token count command
+
+    updater.start_polling()
+    updater.idle()
+
+if __name__ == '__main__':
+    main()
+     
     async def start(self):
         await super().start()
         me = await self.get_me()
