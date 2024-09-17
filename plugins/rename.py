@@ -18,7 +18,36 @@ from asyncio import sleep
 from PIL import Image
 import os, time
 
+# Initialize a flag to track sequence state
+in_sequence = False
 
+def execute_command(command):
+    global in_sequence
+    
+    if command == "startsequence":
+        in_sequence = True
+        print("Starting sequence")
+        # Optionally add logic to initialize sequence
+    elif command == "endsequence":
+        if in_sequence:
+            in_sequence = False
+            print("Ending sequence")
+            # Optionally add logic to finalize sequence
+        else:
+            print("Error: endsequence without startsequence")
+    elif in_sequence:
+        # Handle commands while in sequence
+        print(f"Executing command in sequence: {command}")
+        # Add your command handling logic here
+    else:
+        # Handle commands normally
+        print(f"Executing command: {command}")
+
+# Example command processing loop
+commands = ["startsequence", "command1", "command2", "endsequence", "command3"]
+for cmd in commands:
+    execute_command(cmd)
+    
 @Client.on_message(filters.private & (filters.document | filters.audio | filters.video))
 async def rename_start(client, message):
     file = getattr(message, message.media.value)
