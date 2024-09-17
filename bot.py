@@ -5,7 +5,7 @@ from pyrogram.raw.all import layer
 from config import Config
 from aiohttp import web
 from route import web_server
-from token_utils import generate_token, decode_token
+from test_token_utils import generate_token, decode_token
 from token_storage import add_token, remove_token, get_tokens_left
 
 def authenticate_user(user_id):
